@@ -456,7 +456,7 @@
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     const input = document.getElementById('emailInput');
     const error = document.getElementById('errorMsg');
     const btn   = document.getElementById('submitBtn');
@@ -470,7 +470,18 @@
 
     error.style.display = 'none';
     btn.disabled = true;
-    btn.textContent = 'Saving...';
+    btn.textContent = 'Sending...';
+
+    try {
+      await fetch('https://formspree.io/f/mpqnkndq', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+    } catch (e) {
+      console.error('Formspree error:', e);
+    }
+
     saveEmail(email);
 
     setTimeout(() => {
